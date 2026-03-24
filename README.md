@@ -10,7 +10,7 @@ Báo cáo tĩnh dạng single-file HTML, trình bày hiệu suất pipeline thá
 Không cần server, không cần cài đặt. Chỉ cần:
 
 ```
-Mở file report_pipeline_ceo.html bằng bất kỳ trình duyệt nào
+Mở file index.html bằng bất kỳ trình duyệt nào
 ```
 
 > Cần kết nối internet để tải font (Google Fonts) và thư viện chart (Chart.js CDN). Nếu offline, font sẽ fallback về system font nhưng nội dung vẫn hiển thị đầy đủ.
