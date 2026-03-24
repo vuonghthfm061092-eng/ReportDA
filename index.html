@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo Cáo Pipeline 4 Kênh — CEO Report | T02/2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  /* ── Colors ── */
+  --bg: #f8f7f5;
+  --bg2: #ffffff;
+  --bg3: #f1f0ee;
+  --bg4: #e8e6e2;
+  --border: rgba(0,0,0,0.07);
+  --border2: rgba(0,0,0,0.13);
+  --text: #1a1917;
+  --text2: #5c5a56;
+  --text3: #9a9890;
+  --accent: #1a1917;
+  --accent2: #000000;
+  --green: #16a34a;
+  --green-dim: rgba(22,163,74,0.08);
+  --blue: #2563eb;
+  --blue-dim: rgba(37,99,235,0.08);
+  --purple: #7c3aed;
+  --purple-dim: rgba(124,58,237,0.08);
+  --red: #dc2626;
+  --red-dim: rgba(220,38,38,0.08);
+  --amber: #d97706;
+  --amber-dim: rgba(217,119,6,0.08);
+  --et: #16a34a;
+  --dvol: #2563eb;
+  --digital: #7c3aed;
+  --cd: #dc2626;
+
+  /* ── Fonts ── */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* ── Layout ── */
+  --nav-h: 52px;
+  --page-px: 2rem;
+  --page-max: 1280px;
+
+  /* ── Chart heights ── */
+  --chart-sm: 220px;
+  --chart-md: 280px;
+  --chart-lg: 320px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── LAYOUT ── */
+.page { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--page-px) 4rem; }
+
+/* ── COVER ── */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cover::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(62,207,142,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cover-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--amber-dim);
+  border: 1px solid rgba(251,191,36,0.3);
+  color: var(--amber);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  width: fit-content;
+}
+.cover-badge::before { content: '◆'; font-size: 8px; }
+
+.cover-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+.cover-title span { color: var(--accent); }
+
+.cover-subtitle {
+  font-size: 1.1rem;
+  color: var(--text2);
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  letter-spacing: 0.02em;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+.cover-meta-item { border-left: 2px solid var(--accent); padding-left: 1rem; }
+.cover-meta-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 2px; }
+.cover-meta-value { font-size: 1rem; font-weight: 500; color: var(--text); }
+
+.cover-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 2rem;
+}
+.cover-kpi {
+  background: var(--bg2);
+  padding: 1.5rem;
+  position: relative;
+}
+.cover-kpi::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.cover-kpi.et::after { background: var(--et); }
+.cover-kpi.dvol::after { background: var(--dvol); }
+.cover-kpi.digital::after { background: var(--digital); }
+.cover-kpi.cd::after { background: var(--cd); }
+
+.cover-kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 6px; }
+.cover-kpi-value { font-size: 2rem; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.cover-kpi.et .cover-kpi-value { color: var(--et); }
+.cover-kpi.dvol .cover-kpi-value { color: var(--dvol); }
+.cover-kpi.digital .cover-kpi-value { color: var(--digital); }
+.cover-kpi.cd .cover-kpi-value { color: var(--cd); }
+.cover-kpi-sub { font-size: 11px; color: var(--text3); }
+
+/* ── SECTION ── */
+.section { padding: 4rem 0 2rem; }
+.section-header { margin-bottom: 2rem; }
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+  display: block;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+.section-desc { font-size: 14px; color: var(--text2); max-width: 680px; line-height: 1.7; }
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, var(--accent), transparent);
+  margin: 1rem 0 2rem;
+  opacity: 0.3;
+}
+
+/* ── GRID ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+/* ── CARD ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.card-lg { padding: 1.5rem; }
+.card-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.75rem; font-weight: 500; }
+.card-title-lg { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 1rem; letter-spacing: -0.01em; }
+
+/* ── METRIC BLOCK ── */
+.metric-big { font-size: 2.2rem; font-weight: 600; line-height: 1; }
+.metric-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.metric-delta-up { color: var(--green); font-size: 12px; font-weight: 500; }
+.metric-delta-down { color: var(--red); font-size: 12px; font-weight: 500; }
+
+/* ── CHANNEL TAG ── */
+.tag { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+.tag-et { background: rgba(62,207,142,0.15); color: var(--et); border: 1px solid rgba(62,207,142,0.3); }
+.tag-dvol { background: rgba(91,156,246,0.15); color: var(--dvol); border: 1px solid rgba(91,156,246,0.3); }
+.tag-digital { background: rgba(167,139,250,0.15); color: var(--digital); border: 1px solid rgba(167,139,250,0.3); }
+.tag-cd { background: rgba(248,113,113,0.15); color: var(--cd); border: 1px solid rgba(248,113,113,0.3); }
+
+/* ── ALERT CARDS ── */
+.alert-card {
+  border-radius: 12px;
+  padding: 1.25rem;
+  border-left: 3px solid;
+}
+.alert-critical { background: rgba(248,113,113,0.06); border-color: var(--red); }
+.alert-success { background: rgba(62,207,142,0.06); border-color: var(--green); }
+.alert-warning { background: rgba(251,191,36,0.06); border-color: var(--amber); }
+.alert-info { background: rgba(91,156,246,0.06); border-color: var(--blue); }
+
+.alert-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem; }
+.alert-icon { font-size: 14px; }
+.alert-title { font-size: 13px; font-weight: 600; }
+.alert-critical .alert-title { color: var(--red); }
+.alert-success .alert-title { color: var(--green); }
+.alert-warning .alert-title { color: var(--amber); }
+.alert-info .alert-title { color: var(--blue); }
+.alert-body { font-size: 12px; color: var(--text2); line-height: 1.7; }
+
+/* ── FUNNEL ── */
+.funnel-stage {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.funnel-stage:last-child { border-bottom: none; }
+.funnel-label { width: 80px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); flex-shrink: 0; }
+.funnel-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.funnel-bar-row { display: flex; align-items: center; gap: 8px; }
+.funnel-bar-bg { flex: 1; height: 7px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+.funnel-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+.funnel-bar-val { width: 36px; text-align: right; font-family: var(--font-mono); font-size: 10px; color: var(--text3); }
+.funnel-channel-label { width: 50px; font-size: 10px; flex-shrink: 0; }
+
+/* ── TABLE ── */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text3); font-weight: 500; padding: 8px 12px;
+  border-bottom: 1px solid var(--border2); text-align: left;
+}
+.data-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--text); vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--bg3); }
+.data-table .num { font-family: var(--font-mono); font-size: 12px; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { display: flex; align-items: center; gap: 8px; }
+.progress-track { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; }
+.progress-pct { font-family: var(--font-mono); font-size: 10px; color: var(--text3); width: 32px; text-align: right; flex-shrink: 0; }
+
+/* ── INSIGHT BOX ── */
+.insight-box {
+  background: linear-gradient(135deg, rgba(200,169,110,0.05), rgba(200,169,110,0.02));
+  border: 1px solid rgba(200,169,110,0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+.insight-box p { font-size: 14px; color: var(--text2); line-height: 1.8; }
+.insight-box strong { color: var(--accent); }
+
+/* ── DECISION MATRIX ── */
+.decision-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.decision-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.decision-priority {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.priority-p1 { color: var(--red); }
+.priority-p2 { color: var(--amber); }
+.priority-p3 { color: var(--blue); }
+.priority-p4 { color: var(--green); }
+.decision-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.decision-body { font-size: 12px; color: var(--text2); line-height: 1.7; }
+.decision-action {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ── CHART WRAPPER ── */
+.chart-wrap { position: relative; }
+.chart-h-sm { position: relative; height: var(--chart-sm); }
+.chart-h-md { position: relative; height: var(--chart-md); }
+.chart-h-lg { position: relative; height: var(--chart-lg); }
+
+/* ── STAT ROW ── */
+.stat-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.stat-num { font-size: 1.8rem; font-weight: 600; line-height: 1; }
+.stat-unit { font-size: 13px; color: var(--text2); }
+
+/* ── SUPERVISOR CARD ── */
+.sup-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+.sup-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+.sup-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.sup-role { font-size: 11px; color: var(--text3); margin-bottom: 0.75rem; }
+.sup-stat { display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+.sup-stat:last-child { border-bottom: none; }
+.sup-stat-label { color: var(--text3); }
+.sup-stat-val { font-family: var(--font-mono); color: var(--text); }
+
+/* ── FOOTER ── */
+.report-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: gap;
+}
+.footer-left { font-size: 12px; color: var(--text3); }
+.footer-right { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+
+/* ── NAV ── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  background: rgba(248,247,245,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 var(--page-px);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  overflow: hidden;
+}
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+.nav a {
+  font-size: 12px;
+  position: relative;
+  color: var(--text3);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s;
+  letter-spacing: 0.03em;
+}
+.nav a.active {
+  color: var(--text);
+  font-weight: 600;
+}
+.nav a.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 100%;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+}
+.nav a:hover { color: var(--text); }
+section[id] {
+  scroll-margin-top: var(--nav-h);
+}
+
+/* ── TREND INDICATOR ── */
+.trend { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 500; }
+.trend-up { color: var(--green); }
+.trend-down { color: var(--red); }
+
+/* ── SCORE CARD ── */
+.score-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem;
+  background: var(--bg3);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.score-rank { font-family: var(--font-display); font-size: 2.5rem; font-weight: 700; line-height: 1; color: var(--border2); }
+.score-rank.top { color: var(--accent); }
+
+/* ── HIGHLIGHT NUMBER ── */
+.hl { color: var(--accent); font-weight: 600; }
+.hl-green { color: var(--green); font-weight: 600; }
+.hl-red { color: var(--red); font-weight: 600; }
+.hl-blue { color: var(--blue); font-weight: 600; }
+.hl-purple { color: var(--purple); font-weight: 600; }
+
+/* ════════════════════════════════════════
+   RESPONSIVE MEDIA QUERIES
+   Strategy: PC-first → max-width thu dần
+   ════════════════════════════════════════ */
+
+/* ── 32 inch / 4K (≥ 1920px) ── */
+@media (min-width: 1920px) {
+  :root {
+    --page-max: 1600px;
+    --chart-sm: 260px;
+    --chart-md: 340px;
+    --chart-lg: 400px;
+  }
+  body { font-size: 15px; }
+  .cover-title { font-size: 5.5rem; }
+  .section-title { font-size: 2.4rem; }
+  .cover-kpi-value { font-size: 2.4rem; }
+}
+
+/* ── Laptop 15 inch (≤ 1280px) ── */
+@media (max-width: 1280px) {
+  :root { --page-px: 1.5rem; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .cover-kpis { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Tablet nằm / Laptop nhỏ (≤ 1024px) ── */
+@media (max-width: 1024px) {
+  :root {
+    --nav-h: 48px;
+    --page-px: 1.25rem;
+    --chart-sm: 200px;
+    --chart-md: 240px;
+    --chart-lg: 280px;
+  }
+  .nav { gap: 1.2rem; }
+  .nav a { font-size: 11.5px; }
+  .nav-brand { margin-right: 0.5rem; font-size: 13px; }
+  .cover-title { font-size: clamp(2.2rem, 4.5vw, 3.5rem); }
+  .cover-meta { gap: 1.5rem; }
+  .section-title { font-size: 1.7rem; }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .decision-matrix { grid-template-columns: 1fr; }
+}
+
+/* ── Tablet đứng / Mobile lớn (≤ 768px) ── */
+@media (max-width: 768px) {
+  :root {
+    --nav-h: 48px;
+    --page-px: 1rem;
+    --chart-sm: 180px;
+    --chart-md: 210px;
+    --chart-lg: 230px;
+  }
+  .nav {
+    gap: 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .cover { padding: 2.5rem 0; min-height: auto; }
+  .cover-title { font-size: clamp(1.9rem, 7vw, 3rem); }
+  .cover-subtitle { font-size: 0.95rem; }
+  .cover-meta { gap: 1rem; }
+  .cover-meta-item { flex: 1 1 calc(50% - 0.5rem); }
+  .cover-kpis { grid-template-columns: repeat(2, 1fr); }
+  .cover-kpi { padding: 1rem; }
+  .cover-kpi-value { font-size: 1.6rem; }
+  .cover-kpi-sub { font-size: 10px; }
+  .section { padding: 2.5rem 0 1.5rem; }
+  .section-title { font-size: 1.45rem; }
+  .section-desc { font-size: 13px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 1rem; overflow-x: auto; }
+  .card-lg { padding: 1.1rem; }
+  .data-table { min-width: 460px; }
+  .report-footer { flex-direction: column; gap: 0.75rem; align-items: flex-start; }
+  .insight-box { padding: 1.1rem; }
+  .insight-box p { font-size: 13px; }
+}
+
+/* ── Mobile nhỏ (≤ 480px) ── */
+@media (max-width: 480px) {
+  :root {
+    --page-px: 0.75rem;
+    --chart-sm: 160px;
+    --chart-md: 185px;
+    --chart-lg: 200px;
+  }
+  .nav-brand { display: none; }
+  .nav { gap: 0.75rem; }
+  .nav a { font-size: 11px; }
+  .cover { min-height: auto; padding: 2rem 0; }
+  .cover-title { font-size: clamp(1.7rem, 8vw, 2.5rem); }
+  .cover-badge { font-size: 10px; padding: 5px 11px; }
+  .cover-meta-item { flex: 1 1 100%; }
+  .cover-kpis { grid-template-columns: 1fr 1fr; gap: 1px; }
+  .cover-kpi-value { font-size: 1.3rem; }
+  .section { padding: 2rem 0 1rem; }
+  .section-title { font-size: 1.3rem; }
+  .section-num { font-size: 10px; }
+  .grid-2,
+  .grid-3,
+  .grid-4 { grid-template-columns: 1fr; }
+  .metric-big { font-size: 1.8rem; }
+  .stat-num { font-size: 1.5rem; }
+  .funnel-label { width: 58px; font-size: 10px; }
+  .alert-body { font-size: 11px; }
+  .decision-body { font-size: 11px; }
+  .decision-title { font-size: 13px; }
+}
+
+/* ── print ── */
+@media print {
+  .nav { display: none; }
+  .cover { min-height: auto; page-break-after: always; }
+  .section { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-brand">Pipeline Report</span>
+  <a href="#cover">Tổng quan</a>
+  <a href="#executive">Executive Summary</a>
+  <a href="#funnel">Funnel Analysis</a>
+  <a href="#channels">Phân tích Kênh</a>
+  <a href="#financial">Tài chính & Sản phẩm</a>
+  <a href="#team">Hiệu suất Đội ngũ</a>
+  <a href="#root-cause">Nguyên nhân gốc rễ</a>
+  <a href="#decisions">Quyết định & Hành động</a>
+</nav>
+
+<!-- COVER -->
+<div class="page">
+<section class="cover" id="cover">
+  <div class="cover-badge">Báo cáo cấp cao — CEO Level</div>
+  <h1 class="cover-title">Phân Tích Pipeline<br><span>4 Kênh Khai Thác</span></h1>
+  <p class="cover-subtitle">Đánh giá toàn diện hiệu suất vận hành, tài chính và đội ngũ tháng 02/2026</p>
+
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Kỳ báo cáo</div>
+      <div class="cover-meta-value">Tháng 02/2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Tổng kênh phân tích</div>
+      <div class="cover-meta-value">4 kênh / 5 tầng funnel</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Tổng giải ngân</div>
+      <div class="cover-meta-value" style="color:var(--accent)">19.1 tỷ VND</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="cover-meta-label">Phân loại</div>
+      <div class="cover-meta-value">Bảo mật — Nội bộ</div>
+    </div>
+  </div>
+
+  <div class="cover-kpis">
+    <div class="cover-kpi et">
+      <div class="cover-kpi-label">ET — Thanh Lý Lên Lại</div>
+      <div class="cover-kpi-value">11.5B</div>
+      <div class="cover-kpi-sub">150 HĐ · Conv 100% · Approval 76.3%</div>
+    </div>
+    <div class="cover-kpi dvol">
+      <div class="cover-kpi-label">DVOL — Website Online</div>
+      <div class="cover-kpi-value">5.6B</div>
+      <div class="cover-kpi-sub">150 HĐ · Conv 100% · Approval 53.5%</div>
+    </div>
+    <div class="cover-kpi digital">
+      <div class="cover-kpi-label">Digital — Ký Số App</div>
+      <div class="cover-kpi-value">1.9B</div>
+      <div class="cover-kpi-sub">68 HĐ · Conv 45.3% · Approval 39.6%</div>
+    </div>
+    <div class="cover-kpi cd">
+      <div class="cover-kpi-label">CD — Thẻ Tín Dụng</div>
+      <div class="cover-kpi-value">30M</div>
+      <div class="cover-kpi-sub">1 HĐ · Conv 0.7% · CRISIS</div>
+    </div>
+  </div>
+</section>
+
+<!-- EXECUTIVE SUMMARY -->
+<section class="section" id="executive">
+  <div class="section-header">
+    <span class="section-num">01 — EXECUTIVE SUMMARY</span>
+    <h2 class="section-title">Bức tranh tổng thể</h2>
+    <p class="section-desc">Kết quả tháng 02/2026 cho thấy sự phân hóa cực kỳ rõ nét giữa các kênh. Hai kênh ET và DVOL đang chịu tải toàn bộ doanh số trong khi Digital chưa khai thác hết tiềm năng và CD đang ở trạng thái khủng hoảng cần can thiệp ngay.</p>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:1rem;">
+    <div class="card">
+      <div class="card-title">Tổng giải ngân</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--accent)">19.1</span><span class="stat-unit">tỷ VND</span></div>
+      <div class="metric-sub">369 hợp đồng thực tế</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Pipeline đang xử lý (LIVE)</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--blue)">231</span><span class="stat-unit">hồ sơ</span></div>
+      <div class="metric-sub">Tổng LIVE = ~8.1B tiềm năng</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Avg loan size</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--green)">51.8</span><span class="stat-unit">triệu</span></div>
+      <div class="metric-sub">ET kéo lên: 76.9M/HĐ</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tỷ lệ reject tổng</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--red)">232</span><span class="stat-unit">HS</span></div>
+      <div class="metric-sub">Tiền thất thoát ước tính ~6B+</div>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <p>
+      Bốn kênh được thiết kế để bổ sung nhau trong chiến lược thu hút khách hàng đa tầng. <strong>ET (khách cũ tái vay)</strong> là động lực doanh số chủ lực với chi phí tìm kiếm khách hàng thấp nhất. <strong>DVOL (website)</strong> mở rộng tệp khách hàng mới với lãi suất cạnh tranh. <strong>Digital (app)</strong> là kênh tương lai nhưng đang gặp tắc nghẽn ở khâu phê duyệt. <strong>CD (thẻ tín dụng)</strong> — kênh có tiềm năng upsell lớn nhưng toàn bộ pipeline đang bị đứt gãy nghiêm trọng và cần được điều tra khẩn cấp trong vòng 48 giờ tới.
+    </p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <div class="alert-card alert-critical">
+      <div class="alert-header"><span class="alert-icon">🚨</span><span class="alert-title">CRITICAL — CD: Pipeline đứt gãy hoàn toàn</span></div>
+      <div class="alert-body">150 leads đầu vào → 16 hồ sơ Pending → 1 hợp đồng. Tỷ lệ chuyển đổi 0.7% là dấu hiệu của một vấn đề hệ thống, không phải thị trường. Cần audit toàn bộ quy trình trong 48h.</div>
+    </div>
+    <div class="alert-card alert-success">
+      <div class="alert-header"><span class="alert-icon">✅</span><span class="alert-title">WINNER — ET: Kênh vượt trội, nhân rộng ngay</span></div>
+      <div class="alert-body">100% leads → contract, approval 76.3%, avg loan cao nhất 76.9M. Khách hàng có lịch sử tốt = rủi ro thấp + doanh số cao. Đây là mô hình cần được nhân rộng và ưu tiên tài nguyên.</div>
+    </div>
+    <div class="alert-card alert-warning">
+      <div class="alert-header"><span class="alert-icon">⚡</span><span class="alert-title">OPPORTUNITY — Digital: 93 hồ sơ reject = 6B bị bỏ lại</span></div>
+      <div class="alert-body">Nếu nâng approval rate Digital từ 39.6% lên 55% (bằng DVOL), ước tính tăng thêm ~20 hợp đồng/tháng, tương đương ~600M doanh số bổ sung. Cần phân tích lý do reject ngay.</div>
+    </div>
+    <div class="alert-card alert-info">
+      <div class="alert-header"><span class="alert-icon">📈</span><span class="alert-title">STABLE — DVOL: Tốt, tối ưu thêm được</span></div>
+      <div class="alert-body">Approval rate 53.5% ổn định. Scheme CR10A (1B+) và tenor dài 36 tháng đang tạo dư địa. DS17 dẫn đầu với 25 HĐ — cần sao chép mô hình thành công này cho các team khác.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FUNNEL ANALYSIS -->
+<section class="section" id="funnel">
+  <div class="section-header">
+    <span class="section-num">02 — FUNNEL ANALYSIS</span>
+    <h2 class="section-title">Phân tích phễu chuyển đổi</h2>
+    <p class="section-desc">Xem điểm thất thoát ở mỗi tầng của từng kênh. Touch và Connect đạt 100% ở tất cả kênh — vấn đề nằm hoàn toàn ở tầng Pending → Contract.</p>
+  </div>
+
+  <div class="card card-lg" style="margin-bottom:1rem;">
+    <div class="card-title-lg">Funnel tổng hợp 4 kênh — 600 leads đầu vào</div>
+    <div class="chart-h-lg"><canvas id="chartFunnelOverall"></canvas></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <div class="card">
+      <div class="card-title-lg">Tỷ lệ chuyển đổi mỗi tầng theo kênh (%)</div>
+      <div class="chart-h-md"><canvas id="chartConvRate"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title-lg">So sánh Approval Rate — Pending → Contract</div>
+      <div class="chart-h-md"><canvas id="chartApproval"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Funnel per channel detailed -->
+  <div class="grid-4">
+    <!-- ET -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="tag tag-et">ET</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--et)">100% Conv.</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Data</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--et)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Touch</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--et)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Connect</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--et)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Pending</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--et)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage" style="border-bottom:none;">
+        <div class="funnel-label">Contract</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--et)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--et);width:32px;text-align:right;font-weight:600">150</span>
+      </div>
+    </div>
+    <!-- DVOL -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="tag tag-dvol">DVOL</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--dvol)">100% Conv.</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Data</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--dvol)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Touch</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--dvol)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Connect</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--dvol)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Pending</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--dvol)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage" style="border-bottom:none;">
+        <div class="funnel-label">Contract</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--dvol)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--dvol);width:32px;text-align:right;font-weight:600">150</span>
+      </div>
+    </div>
+    <!-- Digital -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="tag tag-digital">Digital</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--digital)">45.3%</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Data</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--digital)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Touch</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--digital)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Connect</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--digital)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Pending</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--digital)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage" style="border-bottom:none;">
+        <div class="funnel-label">Contract</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:45.3%;height:100%;border-radius:3px;background:var(--digital)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--digital);width:32px;text-align:right;font-weight:600">68</span>
+      </div>
+    </div>
+    <!-- CD -->
+    <div class="card" style="border-color:rgba(248,113,113,0.2);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span class="tag tag-cd">CD</span>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--red)">0.7% ⚠</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Data</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--cd)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Touch</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--cd)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Connect</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:100%;height:100%;border-radius:3px;background:var(--cd)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);width:32px;text-align:right">150</span>
+      </div>
+      <div class="funnel-stage">
+        <div class="funnel-label">Pending</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:10.7%;height:100%;border-radius:3px;background:var(--cd)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--red);width:32px;text-align:right;font-weight:600">16 !</span>
+      </div>
+      <div class="funnel-stage" style="border-bottom:none;">
+        <div class="funnel-label">Contract</div>
+        <div class="progress-track" style="flex:1;height:6px;background:var(--bg3);border-radius:3px;"><div class="progress-fill" style="width:0.7%;height:100%;border-radius:3px;background:var(--red)"></div></div>
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--red);width:32px;text-align:right;font-weight:600">1 !!!</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHANNEL ANALYSIS -->
+<section class="section" id="channels">
+  <div class="section-header">
+    <span class="section-num">03 — CHANNEL DEEP DIVE</span>
+    <h2 class="section-title">Phân tích chuyên sâu từng kênh</h2>
+    <p class="section-desc">Mỗi kênh có đặc điểm khách hàng, cơ chế thu hút và điểm nghẽn riêng biệt. Hiểu đúng từng kênh là nền tảng để ra quyết định phân bổ nguồn lực chính xác.</p>
+  </div>
+
+  <div class="card card-lg" style="margin-bottom:1rem;">
+    <div class="card-title-lg">Tổng giải ngân theo kênh — thị phần và quy mô (VND)</div>
+    <div class="chart-h-lg"><canvas id="chartDisbursed"></canvas></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <div class="card">
+      <div class="card-title-lg">Phân phối loan amount — ET vs DVOL vs Digital</div>
+      <div class="chart-h-md"><canvas id="chartAvgLoan"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title-lg">Lãi suất trung bình theo kênh (IR%)</div>
+      <div class="chart-h-md"><canvas id="chartIR"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Tenor Distribution -->
+  <div class="card card-lg" style="margin-bottom:1rem;">
+    <div class="card-title-lg">Phân phối kỳ hạn (Tenor) — Chiến lược sản phẩm theo kênh</div>
+    <div class="chart-h-md"><canvas id="chartTenor"></canvas></div>
+    <div style="margin-top:1rem;padding:1rem;background:var(--bg3);border-radius:8px;">
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:var(--et)">ET</strong> tập trung mạnh vào tenor dài (36-42 tháng = 74 HĐ), phản ánh khách hàng cũ có nhu cầu vốn lớn và dài hạn. 
+        <strong style="color:var(--dvol)">DVOL</strong> phân phối đều từ 9-36 tháng — đa dạng sản phẩm. 
+        <strong style="color:var(--digital)">Digital</strong> nghiêng về tenor trung bình 18-24 tháng — KH trẻ, vay lần đầu.
+      </p>
+    </div>
+  </div>
+
+  <!-- IR Band -->
+  <div class="card card-lg" style="margin-bottom:1rem;">
+    <div class="card-title-lg">Phân phối lãi suất theo band — Risk Pricing Analysis</div>
+    <div class="chart-h-md"><canvas id="chartIRBand"></canvas></div>
+  </div>
+</section>
+
+<!-- FINANCIAL -->
+<section class="section" id="financial">
+  <div class="section-header">
+    <span class="section-num">04 — FINANCIAL & PRODUCT ANALYSIS</span>
+    <h2 class="section-title">Tài chính & Cơ cấu sản phẩm</h2>
+    <p class="section-desc">Phân tích scheme sản phẩm, địa lý và xu hướng giải ngân theo ngày giúp xác định đâu là sản phẩm cốt lõi và thị trường trọng điểm.</p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <div class="card">
+      <div class="card-title-lg">Top scheme theo giải ngân — ET (kênh chủ lực)</div>
+      <table class="data-table">
+        <thead><tr><th>Scheme</th><th>Số HĐ</th><th>Giải ngân</th><th>Tỷ trọng</th></tr></thead>
+        <tbody>
+          <tr><td>CR10A</td><td class="num">29</td><td class="num" style="color:var(--et)">3,120M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--et)"></div></div><span class="progress-pct">27%</span></div></td></tr>
+          <tr><td>CR11A</td><td class="num">10</td><td class="num" style="color:var(--et)">2,149M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:69%;background:var(--et)"></div></div><span class="progress-pct">19%</span></div></td></tr>
+          <tr><td>NCCR175A</td><td class="num">7</td><td class="num" style="color:var(--et)">1,074M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:34%;background:var(--et)"></div></div><span class="progress-pct">9%</span></div></td></tr>
+          <tr><td>CR09A</td><td class="num">15</td><td class="num" style="color:var(--et)">1,047M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:34%;background:var(--et)"></div></div><span class="progress-pct">9%</span></div></td></tr>
+          <tr><td>CL06A</td><td class="num">11</td><td class="num" style="color:var(--et)">589M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:19%;background:var(--et)"></div></div><span class="progress-pct">5%</span></div></td></tr>
+          <tr><td>CR08A</td><td class="num">9</td><td class="num">459M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:15%;background:var(--et)"></div></div><span class="progress-pct">4%</span></div></td></tr>
+          <tr><td>CR01A</td><td class="num">9</td><td class="num">432M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:14%;background:var(--et)"></div></div><span class="progress-pct">4%</span></div></td></tr>
+          <tr><td>Khác</td><td class="num">60</td><td class="num">1,875M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:60%;background:var(--text3)"></div></div><span class="progress-pct">16%</span></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title-lg">Phân phối giải ngân theo ngày trong tháng</div>
+      <div class="chart-h-lg"><canvas id="chartDaily"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Geographic -->
+  <div class="card card-lg" style="margin-bottom:1rem;">
+    <div class="card-title-lg">Top 8 tỉnh thành theo số hợp đồng — DVOL & ET</div>
+    <div class="chart-h-md"><canvas id="chartCity"></canvas></div>
+    <div style="margin-top:1rem;padding:1rem;background:var(--bg3);border-radius:8px;">
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;">
+        <strong style="color:var(--text)">HCM và Hà Nội</strong> chiếm ưu thế tuyệt đối ở cả 2 kênh — đây là thị trường cốt lõi. Tuy nhiên <strong style="color:var(--accent)">Đồng Nai, An Giang, Long An, Đồng Tháp</strong> đang nổi lên mạnh mẽ ở DVOL — cơ hội mở rộng thị trường vùng ven. ET tập trung ở <strong style="color:var(--green)">HCM, Hà Nội, Phú Yên, Hải Phòng</strong> — các vùng kinh tế phát triển nơi KH cũ tập trung.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pending Pipeline Value -->
+  <div class="grid-4">
+    <div class="card" style="border-color:rgba(62,207,142,0.2);">
+      <div class="card-title">ET — Pipeline LIVE</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--et)">6.8B</span></div>
+      <div class="metric-sub">105 hồ sơ · Approval rate cao</div>
+    </div>
+    <div class="card" style="border-color:rgba(91,156,246,0.2);">
+      <div class="card-title">DVOL — Pipeline LIVE</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--dvol)">2.2B</span></div>
+      <div class="metric-sub">65 hồ sơ · Ổn định</div>
+    </div>
+    <div class="card" style="border-color:rgba(167,139,250,0.2);">
+      <div class="card-title">Digital — Pipeline LIVE</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--digital)">1.2B</span></div>
+      <div class="metric-sub">57 hồ sơ · Cần tối ưu approval</div>
+    </div>
+    <div class="card" style="border-color:rgba(248,113,113,0.2);">
+      <div class="card-title">CD — Pipeline LIVE</div>
+      <div class="stat-row"><span class="stat-num" style="color:var(--red)">71M</span></div>
+      <div class="metric-sub">4 hồ sơ · Pipeline cạn kiệt</div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM PERFORMANCE -->
+<section class="section" id="team">
+  <div class="section-header">
+    <span class="section-num">05 — TEAM PERFORMANCE</span>
+    <h2 class="section-title">Hiệu suất đội ngũ</h2>
+    <p class="section-desc">Phân tích theo 3 cấp: Supervisor (Nhánh) → Team (DSO Team) → Cá nhân. Xác định top performer để nhân rộng và điểm yếu để can thiệp.</p>
+  </div>
+
+  <!-- Supervisor cards -->
+  <div style="margin-bottom:1rem;">
+    <div class="card-title-lg" style="margin-bottom:1rem;font-family:var(--font-display);font-size:1.1rem;color:var(--text)">Hiệu suất Supervisor — tổng hợp 4 kênh</div>
+  </div>
+  <div class="grid-3" style="margin-bottom:1.5rem;">
+    <div class="sup-card" style="border-color:rgba(200,169,110,0.2);">
+      <div class="sup-avatar" style="background:rgba(200,169,110,0.1);color:var(--accent);">NĐM</div>
+      <div class="sup-name">Nguyễn Đăng Mạnh</div>
+      <div class="sup-role">Senior Supervisor</div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng HĐ</span><span class="sup-stat-val">177</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân ET</span><span class="sup-stat-val" style="color:var(--et)">4,594M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân DVOL</span><span class="sup-stat-val" style="color:var(--dvol)">2,908M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân Digital</span><span class="sup-stat-val" style="color:var(--digital)">914M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng giải ngân</span><span class="sup-stat-val" style="color:var(--accent);font-weight:600">8,436M</span></div>
+    </div>
+    <div class="sup-card" style="border-color:rgba(62,207,142,0.15);">
+      <div class="sup-avatar" style="background:rgba(62,207,142,0.1);color:var(--green);">NTC</div>
+      <div class="sup-name">Nguyễn Thị Thúy Chinh</div>
+      <div class="sup-role">Senior Supervisor</div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng HĐ</span><span class="sup-stat-val">132</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân ET</span><span class="sup-stat-val" style="color:var(--et)">6,239M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân DVOL</span><span class="sup-stat-val" style="color:var(--dvol)">1,726M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân Digital</span><span class="sup-stat-val" style="color:var(--digital)">339M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng giải ngân</span><span class="sup-stat-val" style="color:var(--accent);font-weight:600">8,304M</span></div>
+    </div>
+    <div class="sup-card">
+      <div class="sup-avatar" style="background:rgba(91,156,246,0.1);color:var(--blue);">TTK</div>
+      <div class="sup-name">Trần Thy Khánh</div>
+      <div class="sup-role">Supervisor</div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng HĐ</span><span class="sup-stat-val">60</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân ET</span><span class="sup-stat-val" style="color:var(--et)">712M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân DVOL</span><span class="sup-stat-val" style="color:var(--dvol)">998M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Giải ngân Digital</span><span class="sup-stat-val" style="color:var(--digital)">643M</span></div>
+      <div class="sup-stat"><span class="sup-stat-label">Tổng giải ngân</span><span class="sup-stat-val" style="color:var(--text2);">2,353M</span></div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <div class="card">
+      <div class="card-title-lg">Top 10 DSO Team theo giải ngân — ET kênh chủ lực</div>
+      <div class="chart-h-lg"><canvas id="chartTeamET"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title-lg">Top 8 DSO Team — DVOL</div>
+      <div class="chart-h-lg"><canvas id="chartTeamDVOL"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Top individual DSO -->
+  <div class="card card-lg">
+    <div class="card-title-lg">Top 15 DSO cá nhân — tổng hợp 4 kênh</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>DSO</th>
+          <th>Số HĐ</th>
+          <th>Tổng giải ngân</th>
+          <th>Performance bar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="num" style="color:var(--accent)">01</td><td>pham.ngoc-mai</td><td class="num">5</td><td class="num" style="color:var(--et)">594M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:100%;background:var(--et)"></div></div><span class="progress-pct">100%</span></div></td></tr>
+        <tr><td class="num" style="color:var(--accent)">02</td><td>vo.thu-suong3</td><td class="num">10</td><td class="num" style="color:var(--et)">486M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:82%;background:var(--et)"></div></div><span class="progress-pct">82%</span></div></td></tr>
+        <tr><td class="num" style="color:var(--accent)">03</td><td>nguyen.phuong-hang2</td><td class="num">4</td><td class="num" style="color:var(--et)">448M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:75%;background:var(--et)"></div></div><span class="progress-pct">75%</span></div></td></tr>
+        <tr><td class="num" style="color:var(--accent)">04</td><td>nguyen.manh-chien</td><td class="num">5</td><td class="num" style="color:var(--et)">403M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:68%;background:var(--et)"></div></div><span class="progress-pct">68%</span></div></td></tr>
+        <tr><td class="num">05</td><td>truong.thi-loan</td><td class="num">2</td><td class="num" style="color:var(--dvol)">359M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:60%;background:var(--dvol)"></div></div><span class="progress-pct">60%</span></div></td></tr>
+        <tr><td class="num">06</td><td>nguyen.thanh-hai5</td><td class="num">3</td><td class="num" style="color:var(--dvol)">353M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:59%;background:var(--dvol)"></div></div><span class="progress-pct">59%</span></div></td></tr>
+        <tr><td class="num">07</td><td>luong.thu-trang</td><td class="num">3</td><td class="num" style="color:var(--dvol)">296M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:50%;background:var(--dvol)"></div></div><span class="progress-pct">50%</span></div></td></tr>
+        <tr><td class="num">08</td><td>doan.thuy-trang</td><td class="num">2</td><td class="num">289M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:49%;background:var(--text3)"></div></div><span class="progress-pct">49%</span></div></td></tr>
+        <tr><td class="num">09</td><td>nguyen.dinh-doan</td><td class="num">2</td><td class="num">289M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:49%;background:var(--text3)"></div></div><span class="progress-pct">49%</span></div></td></tr>
+        <tr><td class="num">10</td><td>nguyen.thi-thuong21</td><td class="num">4</td><td class="num">280M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:47%;background:var(--text3)"></div></div><span class="progress-pct">47%</span></div></td></tr>
+        <tr><td class="num">11</td><td>le.ngoc-vy</td><td class="num">1</td><td class="num">259M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:44%;background:var(--text3)"></div></div><span class="progress-pct">44%</span></div></td></tr>
+        <tr><td class="num">12</td><td>tran.minh-hau</td><td class="num">1</td><td class="num">250M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:42%;background:var(--text3)"></div></div><span class="progress-pct">42%</span></div></td></tr>
+        <tr><td class="num">13</td><td>nguyen.trong-tuyen1</td><td class="num">4</td><td class="num">244M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:41%;background:var(--text3)"></div></div><span class="progress-pct">41%</span></div></td></tr>
+        <tr><td class="num">14</td><td>pham.thi-hau1</td><td class="num">1</td><td class="num">240M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:40%;background:var(--text3)"></div></div><span class="progress-pct">40%</span></div></td></tr>
+        <tr><td class="num">15</td><td>le.thanh-tuyen7</td><td class="num">6</td><td class="num">239M</td><td><div class="progress-wrap"><div class="progress-track"><div class="progress-fill" style="width:40%;background:var(--text3)"></div></div><span class="progress-pct">40%</span></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ROOT CAUSE -->
+<section class="section" id="root-cause">
+  <div class="section-header">
+    <span class="section-num">06 — ROOT CAUSE ANALYSIS</span>
+    <h2 class="section-title">Phân tích nguyên nhân gốc rễ</h2>
+    <p class="section-desc">Không phân tích bề mặt — đào sâu vào lý do thật sự tại sao kênh hoạt động hoặc không hoạt động, và kết nối chúng thành một bức tranh chiến lược.</p>
+  </div>
+
+  <!-- Why ET wins -->
+  <div class="insight-box">
+    <p>
+      <strong>Tại sao ET dẫn đầu tuyệt đối?</strong> ET không phải kênh "may mắn" — đây là thiết kế chiến lược. Khách hàng Thanh Lý Lên Lại đã có <strong>lịch sử tín dụng được xác minh</strong> tại chính công ty. Hệ thống scoring không cần phải xây dựng hồ sơ từ đầu, giúp approval rate đạt <strong>76.3%</strong> — cao nhất trong 4 kênh. Avg loan <strong>76.9M</strong> phản ánh KH cũ thường có nhu cầu vốn lớn hơn, kỳ hạn dài hơn (36-42 tháng), tạo ra dư nợ bền vững. Chi phí thu hồi thấp (DSO đã biết KH) + rủi ro thấp (lịch sử biết trước) = <strong>ROI cao nhất hệ thống</strong>.
+    </p>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem;">
+    <!-- CD root cause -->
+    <div class="card card-lg" style="border-color:rgba(248,113,113,0.25);">
+      <div style="margin-bottom:1rem;">
+        <span class="tag tag-cd" style="margin-bottom:8px;display:inline-block;">CD — Thẻ tín dụng</span>
+        <div class="card-title-lg" style="color:var(--red)">5 giả thuyết nguyên nhân cần kiểm tra ngay</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:10px;background:var(--red-dim);border-radius:8px;border-left:2px solid var(--red);">
+          <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;">Giả thuyết 1: Policy thay đổi không được cập nhật cho DSO</div>
+          <div style="font-size:11px;color:var(--text2);">Nếu điều kiện CD được siết chặt nhưng DSO vẫn tư vấn theo tiêu chí cũ → leads không đủ điều kiện → Pending thấp.</div>
+        </div>
+        <div style="padding:10px;background:var(--red-dim);border-radius:8px;border-left:2px solid var(--red);">
+          <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:3px;">Giả thuyết 2: Chất lượng leads đầu vào kém</div>
+          <div style="font-size:11px;color:var(--text2);">150 leads CD có thể là KH từng bị từ chối trước đây — data source không được lọc, dẫn đến tỷ lệ chuyển đổi thấp về cơ học.</div>
+        </div>
+        <div style="padding:10px;background:var(--amber-dim);border-radius:8px;border-left:2px solid var(--amber);">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:3px;">Giả thuyết 3: DSO chưa được training về scheme CD</div>
+          <div style="font-size:11px;color:var(--text2);">Scheme CD (CLPNG41A) yêu cầu chứng từ sinh viên/đặc thù khác vay thông thường — nếu DSO tư vấn sai → KH không submit đủ hồ sơ.</div>
+        </div>
+        <div style="padding:10px;background:var(--amber-dim);border-radius:8px;border-left:2px solid var(--amber);">
+          <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:3px;">Giả thuyết 4: Lỗi kỹ thuật trong pipeline xử lý</div>
+          <div style="font-size:11px;color:var(--text2);">Hệ thống có thể không forward case CD đúng cách hoặc có bug trong phân loại Nguon = "Thẻ tín dụng".</div>
+        </div>
+        <div style="padding:10px;background:var(--bg3);border-radius:8px;border-left:2px solid var(--border2);">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px;">Giả thuyết 5: Thị trường CD bão hòa trong tháng 2</div>
+          <div style="font-size:11px;color:var(--text3);">Tháng 2 (Tết) có thể ảnh hưởng đến appetite vay thẻ tín dụng — nhưng không đủ giải thích tỷ lệ 0.7%.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Digital root cause -->
+    <div class="card card-lg" style="border-color:rgba(167,139,250,0.2);">
+      <div style="margin-bottom:1rem;">
+        <span class="tag tag-digital" style="margin-bottom:8px;display:inline-block;">Digital — Ký số App</span>
+        <div class="card-title-lg" style="color:var(--digital)">Tại sao 93 hồ sơ bị reject?</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:10px;background:var(--purple-dim);border-radius:8px;border-left:2px solid var(--purple);">
+          <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:3px;">Vấn đề 1: Pre-screening không đủ mạnh trên App</div>
+          <div style="font-size:11px;color:var(--text2);">KH tự điền thông tin trên app, không qua DSO filter → nhiều hồ sơ không đủ điều kiện vẫn được submit và chiếm tài nguyên xử lý.</div>
+        </div>
+        <div style="padding:10px;background:var(--purple-dim);border-radius:8px;border-left:2px solid var(--purple);">
+          <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:3px;">Vấn đề 2: Credit profile KH digital khác biệt</div>
+          <div style="font-size:11px;color:var(--text2);">KH ký số có xu hướng trẻ hơn, lần đầu vay, chưa có lịch sử tín dụng → model scoring chưa được calibrate cho segment này.</div>
+        </div>
+        <div style="padding:10px;background:var(--purple-dim);border-radius:8px;border-left:2px solid var(--purple);">
+          <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:3px;">Vấn đề 3: Avg loan thấp nhất (27.9M) — sản phẩm chưa phù hợp</div>
+          <div style="font-size:11px;color:var(--text2);">Digital đang pull kéo KH có nhu cầu vay nhỏ. Scheme CLPNG41A (30M) chiếm nhiều nhất — cần xem xét có scheme phù hợp hơn cho kênh này không.</div>
+        </div>
+        <div style="padding:10px;background:var(--bg3);border-radius:8px;border-left:2px solid var(--border2);">
+          <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:3px;">Cơ hội: Nếu tăng approval 39.6% → 55%</div>
+          <div style="font-size:11px;color:var(--text3);">Thêm ~23 hợp đồng × 27.9M avg = ~642M doanh số bổ sung mỗi tháng. Đây là low-hanging fruit có thể capture ngay.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supervisor performance gap -->
+  <div class="insight-box">
+    <p>
+      <strong>Khoảng cách giữa các Supervisor:</strong> NĐM và NTC có tổng giải ngân tương đương (~8.4B và ~8.3B) nhưng chiến lược khác nhau. NTC vượt trội ở ET (6.2B vs 4.6B của NĐM) — team NTC có DSO giỏi về khai thác KH cũ. Ngược lại, NĐM mạnh hơn ở DVOL (2.9B vs 1.7B) — team NĐM giỏi chuyển đổi leads online. <strong>TTK đang tụt lại đáng kể</strong> (2.4B — chỉ bằng 28% tổng) — cần xem xét có phải do vùng địa lý, chất lượng team, hay năng lực leadership.
+    </p>
+  </div>
+</section>
+
+<!-- DECISIONS -->
+<section class="section" id="decisions">
+  <div class="section-header">
+    <span class="section-num">07 — EXECUTIVE DECISIONS</span>
+    <h2 class="section-title">Ma trận quyết định & Hành động</h2>
+    <p class="section-desc">Dựa trên phân tích toàn bộ dữ liệu, đây là 8 quyết định ưu tiên theo mức độ tác động và tính khẩn cấp. Mỗi quyết định có deadline và owner rõ ràng.</p>
+  </div>
+
+  <!-- Quadrant chart -->
+  <div class="card card-lg" style="margin-bottom:1.5rem;">
+    <div class="card-title-lg">Ma trận Tác động × Tính khẩn cấp</div>
+    <div class="chart-h-lg"><canvas id="chartQuadrant"></canvas></div>
+  </div>
+
+  <div class="decision-matrix">
+    <div class="decision-item" style="border-color:rgba(248,113,113,0.2);">
+      <div class="decision-priority priority-p1">⬤ PRIORITY 1 — KHẨN CẤP / TÁC ĐỘNG CAO</div>
+      <div class="decision-title">Audit toàn bộ kênh CD trong 48 giờ</div>
+      <div class="decision-body">
+        Triệu tập họp khẩn với trưởng nhóm CD, review lại 150 case trong tháng. Kiểm tra 5 giả thuyết theo thứ tự: (1) system bug, (2) policy change, (3) data quality, (4) DSO training, (5) market. Output: báo cáo nguyên nhân + action plan trong 5 ngày làm việc.
+      </div>
+      <div class="decision-action">→ Owner: Trưởng phòng Kinh doanh | Deadline: 26/03/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(62,207,142,0.2);">
+      <div class="decision-priority priority-p1">⬤ PRIORITY 1 — TĂNG TỐC / TÁC ĐỘNG CAO</div>
+      <div class="decision-title">Mở rộng danh sách ET — ưu tiên tài nguyên ngay</div>
+      <div class="decision-body">
+        ET đang hoạt động 100% với zero waste leads. Cần tăng volume đầu vào cho kênh này. Khai thác thêm từ portfolio KH cũ có lịch sử tốt (≥ 24 tháng, no delinquency). Target: tăng từ 150 lên 200 leads/tháng trong tháng 03.
+      </div>
+      <div class="decision-action">→ Owner: Data Team + RM | Deadline: 01/04/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(251,191,36,0.2);">
+      <div class="decision-priority priority-p2">⬤ PRIORITY 2 — QUAN TRỌNG / TỐI ƯU</div>
+      <div class="decision-title">Tái thiết kế Pre-screening App — tăng approval Digital</div>
+      <div class="decision-body">
+        Xây dựng bộ câu hỏi pre-qualify trên app (thu nhập, tình trạng việc làm, lịch sử vay). Chỉ forward hồ sơ đủ điều kiện vào pipeline. Mục tiêu: nâng approval rate từ 39.6% → 55% trong Q2. Ước tính tăng 600M/tháng.
+      </div>
+      <div class="decision-action">→ Owner: Product Team + Credit Team | Deadline: 15/04/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(251,191,36,0.2);">
+      <div class="decision-priority priority-p2">⬤ PRIORITY 2 — QUAN TRỌNG / PHÁT TRIỂN</div>
+      <div class="decision-title">Nhân rộng mô hình DS14 & DS09 — ET top performers</div>
+      <div class="decision-body">
+        DS14 (avg loan 102M, 19 HĐ) và DS09 (avg loan 131M, 4 HĐ) đang khai thác KH ET ở phân khúc premium. Tổ chức knowledge sharing, review lại script tư vấn và approach của họ. Apply cho 5-7 team đang có avg loan dưới 70M.
+      </div>
+      <div class="decision-action">→ Owner: Training Manager | Deadline: 31/03/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(91,156,246,0.2);">
+      <div class="decision-priority priority-p3">⬤ PRIORITY 3 — CHIẾN LƯỢC / TRUNG HẠN</div>
+      <div class="decision-title">Phát triển Supervisor TTK — thu hẹp khoảng cách</div>
+      <div class="decision-body">
+        TTK chỉ đạt 2.4B so với NĐM (8.4B) và NTC (8.3B) — chênh lệch 3.5x. Cần xác định nguyên nhân: vùng địa lý, team size, hay năng lực. Nếu structural → tái phân bổ team. Nếu skill gap → mentoring program 90 ngày.
+      </div>
+      <div class="decision-action">→ Owner: Sales Director | Deadline: 30/04/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(91,156,246,0.2);">
+      <div class="decision-priority priority-p3">⬤ PRIORITY 3 — CHIẾN LƯỢC / TRUNG HẠN</div>
+      <div class="decision-title">Mở rộng thị trường DVOL vùng ven</div>
+      <div class="decision-body">
+        Đồng Nai, An Giang, Long An, Đồng Tháp đang nổi lên mạnh trong DVOL. Phân bổ thêm DSO có kinh nghiệm cho các vùng này. Tạo campaign digital marketing targeting tỉnh thành tier 2-3 — chi phí thấp hơn HCM nhưng demand đang tăng nhanh.
+      </div>
+      <div class="decision-action">→ Owner: Marketing + Regional Head | Deadline: 15/05/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(167,139,250,0.15);">
+      <div class="decision-priority priority-p4">⬤ PRIORITY 4 — CẢI TIẾN / DÀI HẠN</div>
+      <div class="decision-title">Xây dựng Credit Model riêng cho Digital segment</div>
+      <div class="decision-body">
+        KH digital có profile khác hoàn toàn KH truyền thống. Model scoring hiện tại có thể đang từ chối nhầm KH tốt. Phối hợp với Data Science team build alternative credit scoring dựa trên digital footprint, app behavior, và social proof cho Q3.
+      </div>
+      <div class="decision-action">→ Owner: Credit + Data Science | Deadline: Q3/2026</div>
+    </div>
+
+    <div class="decision-item" style="border-color:rgba(167,139,250,0.15);">
+      <div class="decision-priority priority-p4">⬤ PRIORITY 4 — CẢI TIẾN / DÀI HẠN</div>
+      <div class="decision-title">Dashboard pipeline real-time thay vì báo cáo cuối tháng</div>
+      <div class="decision-body">
+        Hiện tại phân tích được thực hiện sau khi tháng kết thúc — tức là CD đã lãng phí toàn bộ tháng 2 mới phát hiện vấn đề. Xây dựng real-time monitoring với alert tự động khi conversion rate của bất kỳ kênh nào giảm >20% so với baseline.
+      </div>
+      <div class="decision-action">→ Owner: BI Team | Deadline: Q3/2026</div>
+    </div>
+  </div>
+
+  <!-- Impact projection -->
+  <div class="insight-box" style="margin-top:1.5rem;">
+    <p>
+      <strong>Nếu thực hiện Priority 1 & 2 trong tháng 03:</strong> Fix CD (giả sử phục hồi về 30-40 HĐ) + ET tăng volume + Digital nâng approval → ước tính tháng 03 có thể đạt <strong>23-25B giải ngân</strong>, tăng 20-30% so với tháng 02. Đây là mục tiêu thực tế và có thể đo lường được. Cần review lại vào đầu tháng 04 để xác nhận trajectory.
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="report-footer">
+  <div class="footer-left">
+    <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:4px;">Pipeline Report — 4 Kênh Khai Thác</div>
+    <div>Tháng 02/2026 · Bảo mật nội bộ · Chỉ dành cho cấp quản lý</div>
+  </div>
+  <div class="footer-right">
+    Được tạo ngày 24/03/2026<br>
+    Data: CD · Digital · DVOL · ET
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<script>
+Chart.defaults.color = '#9a9890';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 12;
+
+const ET_C = '#3ecf8e', DVOL_C = '#5b9cf6', DIG_C = '#a78bfa', CD_C = '#f87171';
+const GRID = 'rgba(0,0,0,0.06)';
+const base = { responsive: true, maintainAspectRatio: false };
+
+// ── 1. FUNNEL OVERALL ──
+new Chart(document.getElementById('chartFunnelOverall'), {
+  type: 'bar',
+  data: {
+    labels: ['Data', 'Touch (Match)', 'Connect (Match)', 'Pending', 'Contract'],
+    datasets: [
+      { label: 'ET', data: [150,150,150,150,150], backgroundColor: ET_C + 'CC', borderRadius: 4 },
+      { label: 'DVOL', data: [150,150,150,150,150], backgroundColor: DVOL_C + 'CC', borderRadius: 4 },
+      { label: 'Digital', data: [150,150,150,150,68], backgroundColor: DIG_C + 'CC', borderRadius: 4 },
+      { label: 'CD', data: [150,150,150,16,1], backgroundColor: CD_C + 'CC', borderRadius: 4 }
+    ]
+  },
+  options: { ...base,
+    plugins: { legend: { labels: { boxWidth: 10, padding: 16, color: '#9a9890' } } },
+    scales: {
+      x: { stacked: false, grid: { color: GRID }, ticks: { color: '#9a9890' } },
+      y: { grid: { color: GRID }, ticks: { color: '#9a9890' }, max: 650 }
+    }
+  }
+});
+
+// ── 2. CONV RATE ──
+new Chart(document.getElementById('chartConvRate'), {
+  type: 'radar',
+  data: {
+    labels: ['Touch Rate', 'Connect Rate', 'Pending Rate', 'Contract Rate', 'Approval Rate'],
+    datasets: [
+      { label:'ET', data:[100,100,100,100,76.3], borderColor:ET_C, backgroundColor:ET_C+'22', pointBackgroundColor:ET_C, borderWidth:2 },
+      { label:'DVOL', data:[100,100,100,100,53.5], borderColor:DVOL_C, backgroundColor:DVOL_C+'22', pointBackgroundColor:DVOL_C, borderWidth:2 },
+      { label:'Digital', data:[100,100,100,45.3,39.6], borderColor:DIG_C, backgroundColor:DIG_C+'22', pointBackgroundColor:DIG_C, borderWidth:2 },
+      { label:'CD', data:[100,100,10.7,0.7,33.5], borderColor:CD_C, backgroundColor:CD_C+'22', pointBackgroundColor:CD_C, borderWidth:2 }
+    ]
+  },
+  options: { ...base,
+    plugins: { legend: { labels: { boxWidth: 10, color: '#9a9890' } } },
+    scales: {
+      r: { beginAtZero:true, max:100, grid:{ color:GRID }, ticks:{ color:'#5c5a56', backdropColor:'transparent', stepSize:25 }, pointLabels:{ color:'#9a9890', font:{size:11} } }
+    }
+  }
+});
+
+// ── 3. APPROVAL RATE ──
+new Chart(document.getElementById('chartApproval'), {
+  type: 'doughnut',
+  data: {
+    labels: ['ET (76.3%)', 'DVOL (53.5%)', 'Digital (39.6%)', 'CD (33.5%)'],
+    datasets: [{
+      data: [76.3, 53.5, 39.6, 33.5],
+      backgroundColor: [ET_C, DVOL_C, DIG_C, CD_C],
+      borderWidth: 0, hoverOffset: 6
+    }]
+  },
+  options: { ...base,
+    cutout: '65%',
+    plugins: { legend: { position:'bottom', labels:{ boxWidth:10, padding:10, color:'#9a9890', font:{size:11} } } }
+  }
+});
+
+// ── 4. DISBURSED ──
+new Chart(document.getElementById('chartDisbursed'), {
+  type: 'bar',
+  data: {
+    labels: ['ET', 'DVOL', 'Digital', 'CD'],
+    datasets: [{ label:'Giải ngân (M VND)', data:[11545, 5631.5, 1895.5, 30],
+      backgroundColor:[ET_C+'CC', DVOL_C+'CC', DIG_C+'CC', CD_C+'CC'],
+      borderRadius: 6, borderSkipped: false }]
+  },
+  options: { ...base, indexAxis: 'y',
+    plugins: { legend:{display:false}, tooltip:{callbacks:{label:v=>Math.round(v.raw).toLocaleString()+'M VND'}} },
+    scales: {
+      x:{ grid:{color:GRID}, ticks:{color:'#9a9890', callback:v=>v/1000+'B'} },
+      y:{ grid:{display:false}, ticks:{color:'#9a9890'} }
+    }
+  }
+});
+
+// ── 5. AVG LOAN ──
+new Chart(document.getElementById('chartAvgLoan'), {
+  type: 'bar',
+  data: {
+    labels: ['ET', 'DVOL', 'Digital', 'CD'],
+    datasets: [{ label:'Avg Loan (M)', data:[76.97, 37.54, 27.88, 30],
+      backgroundColor:[ET_C, DVOL_C, DIG_C, CD_C], borderRadius:6, borderSkipped:false }]
+  },
+  options: { ...base,
+    plugins:{ legend:{display:false}, tooltip:{callbacks:{label:v=>v.formattedValue+'M VND'}} },
+    scales:{ x:{grid:{display:false},ticks:{color:'#9a9890'}}, y:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v+'M'}} }
+  }
+});
+
+// ── 6. IR ──
+new Chart(document.getElementById('chartIR'), {
+  type: 'line',
+  data: {
+    labels: ['ET','DVOL','Digital','CD'],
+    datasets: [{
+      label:'Avg IR%', data:[36.03, 32.88, 34.87, 35.08],
+      borderColor: '#c8a96e', backgroundColor: '#c8a96e22',
+      pointBackgroundColor:'#c8a96e', fill:true, tension:0.4, borderWidth:2, pointRadius:5
+    }]
+  },
+  options: { ...base,
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:GRID},ticks:{color:'#9a9890'}},y:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v+'%'},min:30,max:40}}
+  }
+});
+
+// ── 7. TENOR ──
+new Chart(document.getElementById('chartTenor'), {
+  type: 'bar',
+  data: {
+    labels: ['9M','12M','15M','18M','24M','30M','36M','42M','48M'],
+    datasets: [
+      { label:'ET', data:[11,0,3,13,34,5,56,18,8], backgroundColor:ET_C+'CC', borderRadius:3 },
+      { label:'DVOL', data:[26,6,2,39,35,2,36,1,2], backgroundColor:DVOL_C+'CC', borderRadius:3 },
+      { label:'Digital', data:[4,3,2,30,17,0,12,0,0], backgroundColor:DIG_C+'CC', borderRadius:3 }
+    ]
+  },
+  options: { ...base,
+    plugins:{legend:{labels:{boxWidth:10,color:'#9a9890'}}},
+    scales:{x:{grid:{display:false},ticks:{color:'#9a9890'}},y:{grid:{color:GRID},ticks:{color:'#9a9890'}}}
+  }
+});
+
+// ── 8. IR BAND ──
+new Chart(document.getElementById('chartIRBand'), {
+  type: 'bar',
+  data: {
+    labels: ['<20%','20-30%','30-35%','35-40%','40-45%','45%+'],
+    datasets: [
+      { label:'ET (M)', data:[327,408,3322,4878.2,1914,696], backgroundColor:ET_C+'CC', borderRadius:3 },
+      { label:'DVOL (M)', data:[234,652.5,503,2415,1190,637], backgroundColor:DVOL_C+'CC', borderRadius:3 },
+      { label:'Digital (M)', data:[36,472,75,465,561.5,286], backgroundColor:DIG_C+'CC', borderRadius:3 }
+    ]
+  },
+  options: { ...base,
+    plugins:{legend:{labels:{boxWidth:10,color:'#9a9890'}},tooltip:{callbacks:{label:v=>v.dataset.label+': '+Math.round(v.raw).toLocaleString()+'M'}}},
+    scales:{x:{grid:{display:false},ticks:{color:'#9a9890'}},y:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v>=1000?v/1000+'B':v+'M'}}}
+  }
+});
+
+// ── 9. DAILY ──
+const days=[1,2,3,4,5,6,7,9,10,11,12,13,14,24,25,26,27];
+const etDaily={1:413,2:1987,3:2114.7,4:2420.5,5:1680,6:266,7:268,9:553,10:413,11:150,12:179,13:152,14:210,24:199,25:163,26:237,27:140};
+const dvolDaily={1:20,2:553,3:409,4:274,5:745,6:305,7:389,9:1137,10:826.5,11:638,12:98,13:49,25:90,26:50,27:48};
+const digDaily={2:9,3:54,4:140,5:110,6:139.5,9:240,10:180,11:160,12:190,13:110,14:30,24:27,26:396,27:110};
+new Chart(document.getElementById('chartDaily'), {
+  type: 'line',
+  data: {
+    labels: days.map(d=>`N${d}`),
+    datasets: [
+      { label:'ET', data:days.map(d=>etDaily[d]||0), borderColor:ET_C, backgroundColor:ET_C+'18', fill:true, tension:0.3, pointRadius:3, borderWidth:2 },
+      { label:'DVOL', data:days.map(d=>dvolDaily[d]||0), borderColor:DVOL_C, backgroundColor:DVOL_C+'18', fill:true, tension:0.3, pointRadius:3, borderWidth:2 },
+      { label:'Digital', data:days.map(d=>digDaily[d]||0), borderColor:DIG_C, backgroundColor:DIG_C+'18', fill:true, tension:0.3, pointRadius:3, borderWidth:2 }
+    ]
+  },
+  options: { ...base,
+    plugins:{legend:{labels:{boxWidth:10,color:'#9a9890',font:{size:11}}},tooltip:{callbacks:{label:v=>v.dataset.label+': '+Math.round(v.raw).toLocaleString()+'M'}}},
+    scales:{x:{grid:{color:GRID},ticks:{color:'#9a9890',maxRotation:45}},y:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v>=1000?v/1000+'B':v+'M'}}}
+  }
+});
+
+// ── 10. CITY ──
+new Chart(document.getElementById('chartCity'), {
+  type: 'bar',
+  data: {
+    labels: ['HCM','Hà Nội','Đồng Nai','An Giang','Long An','Phú Yên','Hải Phòng','Vũng Tàu'],
+    datasets: [
+      { label:'ET', data:[20,10,0,0,6,6,6,0], backgroundColor:ET_C+'CC', borderRadius:3 },
+      { label:'DVOL', data:[18,10,7,7,6,0,0,5], backgroundColor:DVOL_C+'CC', borderRadius:3 }
+    ]
+  },
+  options: { ...base,
+    plugins:{legend:{labels:{boxWidth:10,color:'#9a9890'}}},
+    scales:{x:{grid:{display:false},ticks:{color:'#9a9890'}},y:{grid:{color:GRID},ticks:{color:'#9a9890'}}}
+  }
+});
+
+// ── 11. TEAM ET ──
+new Chart(document.getElementById('chartTeamET'), {
+  type: 'bar',
+  data: {
+    labels:['DS14','DS04','DS12','DS10','DS07','DS13','DS11','DS01','DS09','DS02'],
+    datasets:[
+      {label:'HĐ×10M avg', data:[1947,971,1087,952,843,663,630,610,525,576],backgroundColor:ET_C+'AA',borderRadius:4},
+    ]
+  },
+  options:{...base,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>Math.round(v.raw).toLocaleString()+'M'}}},
+    scales:{x:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v>=1000?v/1000+'B':v+'M'}},y:{grid:{display:false},ticks:{color:'#9a9890',font:{size:11}}}}
+  }
+});
+
+// ── 12. TEAM DVOL ──
+new Chart(document.getElementById('chartTeamDVOL'), {
+  type: 'bar',
+  data: {
+    labels:['DS17','DS19','DS16','DS09','DS06','DS18','DS01','DS02'],
+    datasets:[{label:'Giải ngân (M)', data:[957.5,739,539,434,413,294,243,239],backgroundColor:DVOL_C+'AA',borderRadius:4}]
+  },
+  options:{...base,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>Math.round(v.raw).toLocaleString()+'M'}}},
+    scales:{x:{grid:{color:GRID},ticks:{color:'#9a9890',callback:v=>v+'M'}},y:{grid:{display:false},ticks:{color:'#9a9890',font:{size:11}}}}
+  }
+});
+
+// ── 13. QUADRANT MATRIX ──
+new Chart(document.getElementById('chartQuadrant'), {
+  type: 'bubble',
+  data: {
+    datasets: [
+      { label:'Fix CD Pipeline', data:[{x:9.5,y:9,r:22}], backgroundColor:CD_C+'CC', borderColor:CD_C },
+      { label:'Mở rộng ET volume', data:[{x:9,y:8,r:28}], backgroundColor:ET_C+'CC', borderColor:ET_C },
+      { label:'Tái thiết Digital pre-screen', data:[{x:7,y:7.5,r:18}], backgroundColor:DIG_C+'CC', borderColor:DIG_C },
+      { label:'Nhân rộng DS14 model', data:[{x:6,y:6.5,r:14}], backgroundColor:ET_C+'88', borderColor:ET_C },
+      { label:'Phát triển Supervisor TTK', data:[{x:4,y:6,r:12}], backgroundColor:DVOL_C+'88', borderColor:DVOL_C },
+      { label:'Mở rộng DVOL vùng ven', data:[{x:4,y:4,r:14}], backgroundColor:DVOL_C+'66', borderColor:DVOL_C },
+      { label:'Credit model Digital', data:[{x:2,y:7,r:10}], backgroundColor:DIG_C+'55', borderColor:DIG_C },
+      { label:'Real-time dashboard', data:[{x:2,y:3,r:10}], backgroundColor:'#c8a96e55', borderColor:'#c8a96e' }
+    ]
+  },
+  options:{...base,
+    plugins:{
+      legend:{labels:{boxWidth:10,padding:8,color:'#9a9890',font:{size:10}}},
+      tooltip:{callbacks:{label:v=>v.dataset.label}}
+    },
+    scales:{
+      x:{min:0,max:10,title:{display:true,text:'Tính khẩn cấp →',color:'#5c5a56',font:{size:11}},grid:{color:GRID},ticks:{color:'#5c5a56'}},
+      y:{min:0,max:10,title:{display:true,text:'Tác động →',color:'#5c5a56',font:{size:11}},grid:{color:GRID},ticks:{color:'#5c5a56'}}
+    }
+  }
+});
+// ── SCROLL SPY ──
+(function () {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav a[href^="#"]');
+  if (!sections.length || !navLinks.length) return;
+
+  const activate = (id) => {
+    navLinks.forEach(l => l.classList.remove('active'));
+    const a = document.querySelector(`.nav a[href="#${id}"]`);
+    if (a) a.classList.add('active');
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) activate(e.target.id); });
+  }, { rootMargin: '-10% 0px -80% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+  activate(sections[0].id); // active đầu tiên khi load
+})();
+</script>
+</body>
+</html>
