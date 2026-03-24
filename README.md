@@ -19,10 +19,10 @@ Mở file index.html bằng bất kỳ trình duyệt nào
 
 ## Cấu trúc file
 
-File duy nhất `report_pipeline_ceo.html` bao gồm tất cả — CSS, HTML, JavaScript — không phụ thuộc file ngoài nào khác ngoài CDN.
+File duy nhất `index.html` bao gồm tất cả — CSS, HTML, JavaScript — không phụ thuộc file ngoài nào khác ngoài CDN.
 
 ```
-report_pipeline_ceo.html
+index.html
 ├── <style>          CSS + CSS Variables + Responsive Media Queries
 ├── <body>
 │   ├── <nav>        Sticky navigation, scroll spy tự động
