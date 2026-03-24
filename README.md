@@ -1,4 +1,4 @@
-[README.md](https://github.com/vuonghthfm061092-eng/ReportDA/README.md)
+[Xem báo cáo](https://vuonghthfm061092-eng.github.io/ReportDA/)
 # Báo Cáo Pipeline 4 Kênh — CEO Report
 
 Báo cáo tĩnh dạng single-file HTML, trình bày hiệu suất pipeline tháng 02/2026 cho 4 kênh khai thác: **ET**, **DVOL**, **Digital**, **CD**. Thiết kế theo chuẩn CEO-level — đọc trên màn hình từ mobile đến 32 inch đều hiển thị đúng.
