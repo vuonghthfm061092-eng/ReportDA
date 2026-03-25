@@ -1576,6 +1576,29 @@ new Chart(document.getElementById('chartQuadrant'), {
   const navLinks = document.querySelectorAll('.nav a[href^="#"]');
   if (!sections.length || !navLinks.length) return;
   let currentId = sections[0].id;
+  // ── KEYBOARD NAVIGATION (← →) ──
+  document.addEventListener('keydown', (e) => {
+  // Bỏ qua nếu user đang gõ trong input/textarea
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+  const idx = sectionIds.indexOf(currentId);
+
+  if (e.key === 'ArrowRight' && idx < sectionIds.length - 1) {
+    const target = document.getElementById(sectionIds[idx + 1]);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+      activate(sectionIds[idx + 1]);
+    }
+  }
+
+  if (e.key === 'ArrowLeft' && idx > 0) {
+    const target = document.getElementById(sectionIds[idx - 1]);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+      activate(sectionIds[idx - 1]);
+    }
+  }
+  });
   
   const activate = (id) => {
     currentId = id;
