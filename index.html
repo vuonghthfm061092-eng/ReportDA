@@ -1575,8 +1575,10 @@ new Chart(document.getElementById('chartQuadrant'), {
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('.nav a[href^="#"]');
   if (!sections.length || !navLinks.length) return;
-
+  let currentId = sections[0].id;
+  
   const activate = (id) => {
+    currentId = id;
     navLinks.forEach(l => l.classList.remove('active'));
     const a = document.querySelector(`.nav a[href="#${id}"]`);
     if (a) a.classList.add('active');
@@ -1597,11 +1599,12 @@ new Chart(document.getElementById('chartQuadrant'), {
     navToggle.setAttribute('aria-expanded', isOpen);
   });
   navLinksEl.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      navLinksEl.classList.remove('open');
-      navToggle.classList.remove('open');
-      navToggle.setAttribute('aria-expanded', false);
-    });
+  a.addEventListener('click', () => {
+    navLinksEl.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', false);
+    setTimeout(() => activate(currentId), 400);
+  });
   });
 }
 // ── DYNAMIC SCROLL MARGIN ──
