@@ -410,6 +410,7 @@ body {
   white-space: nowrap;
   flex-shrink: 0;
   margin-right: 1rem;
+  text-decoration: none;
 }
 .nav a {
   font-size: 12px;
@@ -654,7 +655,7 @@ section[id] {
 
 <!-- NAV -->
 <nav class="nav">
-  <span class="nav-brand">Pipeline Report</span>
+  <a href="#cover" class="nav-brand">Pipeline Report</a>
 
   <button class="nav-toggle" aria-label="Menu" aria-expanded="false">
     <span></span><span></span><span></span>
@@ -1632,6 +1633,13 @@ new Chart(document.getElementById('chartQuadrant'), {
       if (target) { target.scrollIntoView({ behavior: 'smooth' }); activate(sectionIds[idx - 1]); }
     }
   });
+  const brandLink = document.querySelector('.nav-brand');
+  if (brandLink) {
+    brandLink.addEventListener('click', () => {
+      if (navLinksEl) navLinksEl.classList.remove('open');
+      if (navToggle)  navToggle.classList.remove('open');
+    });
+  }
 
   activate(sectionIds[0]);
   updateScrollMargin();
