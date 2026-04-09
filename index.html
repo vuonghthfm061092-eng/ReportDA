@@ -10,17 +10,15 @@
   import createGlobe from 'https://esm.sh/cobe@0.6.3';
 
   const canvas = document.getElementById('cobe-canvas');
-  const svg = document.getElementById('label-layer');
+  const wrap = document.getElementById('globe-wrap');
   const s = 320;
   canvas.width = s * 2;
   canvas.height = s * 2;
 
-  // Căn Việt Nam vào tâm: lon 106°E → phi = PI - 1.85 ≈ 1.29
   let phi = 1.29;
-  const theta = -0.15;
-  let isDragging = false;
-  let dragStartX = 0;
-  let dragStartPhi = phi;
+  let theta = -0.15;
+  let isDragging = false, dragStartX = 0, dragStartY = 0;
+  let dragStartPhi = phi, dragStartTheta = theta;
 
   const markerData = [
     { location: [10.8231, 106.6297], label: 'TP.HCM',   pct: '+12%', up: true  },
@@ -30,90 +28,69 @@
     { location: [20.8449, 106.6881], label: 'Hải Phòng', pct: '-1%',  up: false },
   ];
 
-  function project(lat, lon, currentPhi, R) {
+  // Tạo HTML label elements
+  const labelEls = markerData.map((m, i) => {
+    const el = document.createElement('div');
+    el.style.cssText = `
+      position:absolute; pointer-events:none;
+      transform:translate(-50%, -100%);
+      display:flex; flex-direction:column; align-items:center; gap:2px;
+    `;
+    el.innerHTML = `
+      <div style="
+        background:#0f172a; border-radius:8px;
+        padding:4px 10px; text-align:center;
+        box-shadow:0 0 0 1px rgba(59,130,246,0.3);
+      ">
+        <div style="font-size:14px; font-weight:700; font-family:system-ui;
+          color:${m.up ? '#4ade80' : '#f87171'};">${m.pct}</div>
+        <div style="font-size:11px; font-family:system-ui; color:#94a3b8;">${m.label}</div>
+      </div>
+      <div style="width:2px; height:10px; background:#3b82f6; opacity:0.6;"></div>
+    `;
+    wrap.appendChild(el);
+    return el;
+  });
+
+  // Hàm project đúng theo COBE coordinate system
+  // COBE: lon=0 ở phi=PI, tăng phi xoay ngược chiều kim đồng hồ
+  function project(lat, lon, phi, theta) {
+    const R = s * 0.97;
     const latR = lat * Math.PI / 180;
     const lonR = lon * Math.PI / 180;
-    const x = Math.cos(latR) * Math.sin(lonR);
-    const y = Math.sin(latR);
-    const z = Math.cos(latR) * Math.cos(lonR);
-    const cosP = Math.cos(currentPhi), sinP = Math.sin(currentPhi);
-    const x2 = x * cosP - z * sinP;
-    const z2 = x * sinP + z * cosP;
+
+    // Bước 1: spherical → cartesian
+    let x = Math.cos(latR) * Math.sin(lonR);
+    let y = Math.sin(latR);
+    let z = Math.cos(latR) * Math.cos(lonR);
+
+    // Bước 2: rotate theo phi (COBE xoay ngược)
+    const cosPhi = Math.cos(-phi), sinPhi = Math.sin(-phi);
+    let x1 = x * cosPhi - z * sinPhi;
+    let z1 = x * sinPhi + z * cosPhi;
+
+    // Bước 3: rotate theo theta
     const cosT = Math.cos(theta), sinT = Math.sin(theta);
-    const y3 = y * cosT - z2 * sinT;
-    const z3 = y * sinT + z2 * cosT;
-    return { x: s + x2 * R, y: s - y3 * R, visible: z3 > 0 };
+    let y2 = y * cosT + z1 * sinT;
+    let z2 = -y * sinT + z1 * cosT;
+
+    // z2 > 0: mặt trước, < 0: mặt sau (khuất)
+    const screenX = s + x1 * R;
+    const screenY = s - y2 * R;
+    return { x: screenX, y: screenY, visible: z2 > -0.1 };
   }
 
-  function renderLabels() {
-    svg.innerHTML = '';
-    const R = s * 0.97;
-
-    markerData.forEach(m => {
-      const pos = project(m.location[0], m.location[1], phi, R);
-      if (!pos.visible) return;
-
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      const px = pos.x, py = pos.y;
-
-      // Connector line (vẽ trước để nằm dưới các element khác)
-      const lx = px + 16, ly = py - 32;
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', px);   line.setAttribute('y1', py - 6);
-      line.setAttribute('x2', lx);   line.setAttribute('y2', ly + 6);
-      line.setAttribute('stroke', '#3b82f6');
-      line.setAttribute('stroke-width', '0.8');
-      line.setAttribute('opacity', '0.5');
-      g.appendChild(line);
-
-      // Glow ring
-      const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      ring.setAttribute('cx', px); ring.setAttribute('cy', py);
-      ring.setAttribute('r', '10');
-      ring.setAttribute('fill', 'none');
-      ring.setAttribute('stroke', '#3b82f6');
-      ring.setAttribute('stroke-width', '1.5');
-      ring.setAttribute('opacity', '0.4');
-      g.appendChild(ring);
-
-      // Dot core
-      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      dot.setAttribute('cx', px); dot.setAttribute('cy', py);
-      dot.setAttribute('r', '5');
-      dot.setAttribute('fill', '#3b82f6');
-      g.appendChild(dot);
-
-      // Pill background
-      const pill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      pill.setAttribute('x', lx);       pill.setAttribute('y', ly - 20);
-      pill.setAttribute('width', '80'); pill.setAttribute('height', '38');
-      pill.setAttribute('rx', '8');
-      pill.setAttribute('fill', '#0f172a');
-      pill.setAttribute('opacity', '0.88');
-      g.appendChild(pill);
-
-      // % số to
-      const tPct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      tPct.setAttribute('x', lx + 40); tPct.setAttribute('y', ly - 4);
-      tPct.setAttribute('text-anchor', 'middle');
-      tPct.setAttribute('font-size', '14');
-      tPct.setAttribute('font-weight', '700');
-      tPct.setAttribute('font-family', 'system-ui, sans-serif');
-      tPct.setAttribute('fill', m.up ? '#4ade80' : '#f87171');
-      tPct.textContent = m.pct;
-      g.appendChild(tPct);
-
-      // Tên tỉnh nhỏ
-      const tName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      tName.setAttribute('x', lx + 40); tName.setAttribute('y', ly + 13);
-      tName.setAttribute('text-anchor', 'middle');
-      tName.setAttribute('font-size', '11');
-      tName.setAttribute('font-family', 'system-ui, sans-serif');
-      tName.setAttribute('fill', '#94a3b8');
-      tName.textContent = m.label;
-      g.appendChild(tName);
-
-      svg.appendChild(g);
+  function updateLabels() {
+    markerData.forEach((m, i) => {
+      const pos = project(m.location[0], m.location[1], phi, theta);
+      const el = labelEls[i];
+      if (!pos.visible) {
+        el.style.opacity = '0';
+      } else {
+        el.style.opacity = '1';
+        el.style.left = pos.x + 'px';
+        el.style.top = (pos.y - 8) + 'px';
+      }
     });
   }
 
@@ -121,10 +98,8 @@
     devicePixelRatio: 2,
     width: s * 2, height: s * 2,
     phi, theta,
-    dark: 0,
-    diffuse: 1.3,
-    mapSamples: 16000,
-    mapBrightness: 6.5,
+    dark: 0, diffuse: 1.3,
+    mapSamples: 16000, mapBrightness: 6.5,
     baseColor: [0.92, 0.96, 1],
     markerColor: [0.22, 0.54, 0.87],
     glowColor: [0.75, 0.88, 1],
@@ -134,26 +109,26 @@
       { from: [10.8231, 106.6297], to: [16.0544, 108.2022] },
       { from: [10.8231, 106.6297], to: [10.0452, 105.7469] },
     ],
-    arcColor: [0.22, 0.62, 1],
-    arcWidth: 1.2,
-    arcHeight: 0.35,
+    arcColor: [0.22, 0.62, 1], arcWidth: 1.2, arcHeight: 0.35,
     onRender(state) {
-      // Đứng yên mặc định, chỉ cập nhật phi khi drag
       state.phi = phi;
-      renderLabels();
+      state.theta = theta;
+      updateLabels();
     }
   });
 
-  // Drag để xoay — mouse
+  // Mouse drag — kéo ngang xoay phi, kéo dọc xoay theta
   canvas.addEventListener('mousedown', e => {
     isDragging = true;
-    dragStartX = e.clientX;
-    dragStartPhi = phi;
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    dragStartPhi = phi; dragStartTheta = theta;
     canvas.style.cursor = 'grabbing';
   });
   window.addEventListener('mousemove', e => {
     if (!isDragging) return;
-    phi = dragStartPhi - (e.clientX - dragStartX) / (s * 1.2);
+    phi   = dragStartPhi   - (e.clientX - dragStartX) / (s * 1.2);
+    theta = dragStartTheta + (e.clientY - dragStartY) / (s * 1.2);
+    theta = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, theta));
   });
   window.addEventListener('mouseup', () => {
     isDragging = false;
@@ -165,12 +140,15 @@
   canvas.addEventListener('touchstart', e => {
     isDragging = true;
     dragStartX = e.touches[0].clientX;
-    dragStartPhi = phi;
+    dragStartY = e.touches[0].clientY;
+    dragStartPhi = phi; dragStartTheta = theta;
     e.preventDefault();
   }, { passive: false });
   window.addEventListener('touchmove', e => {
     if (!isDragging) return;
-    phi = dragStartPhi - (e.touches[0].clientX - dragStartX) / (s * 1.2);
+    phi   = dragStartPhi   - (e.touches[0].clientX - dragStartX) / (s * 1.2);
+    theta = dragStartTheta + (e.touches[0].clientY - dragStartY) / (s * 1.2);
+    theta = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, theta));
     e.preventDefault();
   }, { passive: false });
   window.addEventListener('touchend', () => { isDragging = false; });
@@ -905,8 +883,6 @@ section[id] {
 <div id="globe-section" style="display:flex; justify-content:center; padding:1.5rem 0;">
   <div id="globe-wrap" style="position:relative; width:320px; height:320px;">
     <canvas id="cobe-canvas" style="width:320px; height:320px; display:block;"></canvas>
-    <svg id="label-layer" style="position:absolute; top:0; left:0; pointer-events:none;"
-         width="640" height="640" viewBox="0 0 640 640"></svg>
   </div>
 </div>
 
