@@ -10,16 +10,117 @@
   import createGlobe from 'https://esm.sh/cobe@0.6.3';
 
   const canvas = document.getElementById('cobe-canvas');
+  const svg = document.getElementById('label-layer');
   const s = 320;
   canvas.width = s * 2;
   canvas.height = s * 2;
 
-  let phi = 1.55;
+  // Căn Việt Nam vào tâm: lon 106°E → phi = PI - 1.85 ≈ 1.29
+  let phi = 1.29;
+  const theta = -0.15;
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartPhi = phi;
+
+  const markerData = [
+    { location: [10.8231, 106.6297], label: 'TP.HCM',   pct: '+12%', up: true  },
+    { location: [21.0285, 105.8542], label: 'Hà Nội',    pct: '+8%',  up: true  },
+    { location: [16.0544, 108.2022], label: 'Đà Nẵng',   pct: '-3%',  up: false },
+    { location: [10.0452, 105.7469], label: 'Cần Thơ',   pct: '+5%',  up: true  },
+    { location: [20.8449, 106.6881], label: 'Hải Phòng', pct: '-1%',  up: false },
+  ];
+
+  function project(lat, lon, currentPhi, R) {
+    const latR = lat * Math.PI / 180;
+    const lonR = lon * Math.PI / 180;
+    const x = Math.cos(latR) * Math.sin(lonR);
+    const y = Math.sin(latR);
+    const z = Math.cos(latR) * Math.cos(lonR);
+    const cosP = Math.cos(currentPhi), sinP = Math.sin(currentPhi);
+    const x2 = x * cosP - z * sinP;
+    const z2 = x * sinP + z * cosP;
+    const cosT = Math.cos(theta), sinT = Math.sin(theta);
+    const y3 = y * cosT - z2 * sinT;
+    const z3 = y * sinT + z2 * cosT;
+    return { x: s + x2 * R, y: s - y3 * R, visible: z3 > 0 };
+  }
+
+  function renderLabels() {
+    svg.innerHTML = '';
+    const R = s * 0.97;
+
+    markerData.forEach(m => {
+      const pos = project(m.location[0], m.location[1], phi, R);
+      if (!pos.visible) return;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      const px = pos.x, py = pos.y;
+
+      // Connector line (vẽ trước để nằm dưới các element khác)
+      const lx = px + 16, ly = py - 32;
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', px);   line.setAttribute('y1', py - 6);
+      line.setAttribute('x2', lx);   line.setAttribute('y2', ly + 6);
+      line.setAttribute('stroke', '#3b82f6');
+      line.setAttribute('stroke-width', '0.8');
+      line.setAttribute('opacity', '0.5');
+      g.appendChild(line);
+
+      // Glow ring
+      const ring = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      ring.setAttribute('cx', px); ring.setAttribute('cy', py);
+      ring.setAttribute('r', '10');
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#3b82f6');
+      ring.setAttribute('stroke-width', '1.5');
+      ring.setAttribute('opacity', '0.4');
+      g.appendChild(ring);
+
+      // Dot core
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', px); dot.setAttribute('cy', py);
+      dot.setAttribute('r', '5');
+      dot.setAttribute('fill', '#3b82f6');
+      g.appendChild(dot);
+
+      // Pill background
+      const pill = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      pill.setAttribute('x', lx);       pill.setAttribute('y', ly - 20);
+      pill.setAttribute('width', '80'); pill.setAttribute('height', '38');
+      pill.setAttribute('rx', '8');
+      pill.setAttribute('fill', '#0f172a');
+      pill.setAttribute('opacity', '0.88');
+      g.appendChild(pill);
+
+      // % số to
+      const tPct = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      tPct.setAttribute('x', lx + 40); tPct.setAttribute('y', ly - 4);
+      tPct.setAttribute('text-anchor', 'middle');
+      tPct.setAttribute('font-size', '14');
+      tPct.setAttribute('font-weight', '700');
+      tPct.setAttribute('font-family', 'system-ui, sans-serif');
+      tPct.setAttribute('fill', m.up ? '#4ade80' : '#f87171');
+      tPct.textContent = m.pct;
+      g.appendChild(tPct);
+
+      // Tên tỉnh nhỏ
+      const tName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      tName.setAttribute('x', lx + 40); tName.setAttribute('y', ly + 13);
+      tName.setAttribute('text-anchor', 'middle');
+      tName.setAttribute('font-size', '11');
+      tName.setAttribute('font-family', 'system-ui, sans-serif');
+      tName.setAttribute('fill', '#94a3b8');
+      tName.textContent = m.label;
+      g.appendChild(tName);
+
+      svg.appendChild(g);
+    });
+  }
 
   createGlobe(canvas, {
     devicePixelRatio: 2,
     width: s * 2, height: s * 2,
-    phi: phi, theta: -0.15,
+    phi, theta,
     dark: 0,
     diffuse: 1.3,
     mapSamples: 16000,
@@ -27,13 +128,7 @@
     baseColor: [0.92, 0.96, 1],
     markerColor: [0.22, 0.54, 0.87],
     glowColor: [0.75, 0.88, 1],
-    markers: [
-      { location: [10.8231, 106.6297], size: 0.10 },
-      { location: [21.0285, 105.8542], size: 0.07 },
-      { location: [16.0544, 108.2022], size: 0.06 },
-      { location: [10.0452, 105.7469], size: 0.06 },
-      { location: [20.8449, 106.6881], size: 0.05 },
-    ],
+    markers: markerData.map(m => ({ location: m.location, size: m.size || 0.07 })),
     arcs: [
       { from: [10.8231, 106.6297], to: [21.0285, 105.8542] },
       { from: [10.8231, 106.6297], to: [16.0544, 108.2022] },
@@ -42,8 +137,43 @@
     arcColor: [0.22, 0.62, 1],
     arcWidth: 1.2,
     arcHeight: 0.35,
-    onRender(state) { phi += 0.004; state.phi = phi; }
+    onRender(state) {
+      // Đứng yên mặc định, chỉ cập nhật phi khi drag
+      state.phi = phi;
+      renderLabels();
+    }
   });
+
+  // Drag để xoay — mouse
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartPhi = phi;
+    canvas.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    phi = dragStartPhi - (e.clientX - dragStartX) / (s * 1.2);
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    canvas.style.cursor = 'grab';
+  });
+  canvas.style.cursor = 'grab';
+
+  // Touch mobile
+  canvas.addEventListener('touchstart', e => {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartPhi = phi;
+    e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    phi = dragStartPhi - (e.touches[0].clientX - dragStartX) / (s * 1.2);
+    e.preventDefault();
+  }, { passive: false });
+  window.addEventListener('touchend', () => { isDragging = false; });
 </script>
 <style>
 :root {
@@ -533,6 +663,8 @@ section[id] {
 .hl-red { color: var(--red); font-weight: 600; }
 .hl-blue { color: var(--blue); font-weight: 600; }
 .hl-purple { color: var(--purple); font-weight: 600; }
+#globe-wrap { position: relative; display: inline-block; }
+#label-layer { position: absolute; top: 0; left: 0; pointer-events: none; }
 
 /* ════════════════════════════════════════
    RESPONSIVE MEDIA QUERIES
@@ -770,9 +902,13 @@ section[id] {
     <p class="section-desc">Kết quả tháng 02/2026 cho thấy sự phân hóa cực kỳ rõ nét giữa các kênh. Hai kênh ET và DVOL đang chịu tải toàn bộ doanh số trong khi Digital chưa khai thác hết tiềm năng và CD đang ở trạng thái khủng hoảng cần can thiệp ngay.</p>
   </div>
   <!-- COBE Globe -->
-  <div id="globe-section" style="display:flex; justify-content:center; padding:1.5rem 0;">
+<div id="globe-section" style="display:flex; justify-content:center; padding:1.5rem 0;">
+  <div id="globe-wrap" style="position:relative; width:320px; height:320px;">
     <canvas id="cobe-canvas" style="width:320px; height:320px; display:block;"></canvas>
+    <svg id="label-layer" style="position:absolute; top:0; left:0; pointer-events:none;"
+         width="640" height="640" viewBox="0 0 640 640"></svg>
   </div>
+</div>
 
   <div class="grid-4" style="margin-bottom:1rem;">
     <div class="card">
