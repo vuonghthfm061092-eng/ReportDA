@@ -5,8 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Báo Cáo Pipeline 4 Kênh — CEO Report | T02/2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/cobe@0.6.3/dist/index.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script type="module">
+  import createGlobe from 'https://cdn.jsdelivr.net/npm/cobe@0.6.3/dist/index.esm.js';
+
+  const canvas = document.getElementById('cobe-canvas');
+  const s = 320;
+  canvas.width = s * 2;
+  canvas.height = s * 2;
+
+  let phi = 1.55;
+
+  createGlobe(canvas, {
+    devicePixelRatio: 2,
+    width: s * 2, height: s * 2,
+    phi: phi, theta: -0.15,
+    dark: 0,
+    diffuse: 1.3,
+    mapSamples: 16000,
+    mapBrightness: 6.5,
+    baseColor: [0.92, 0.96, 1],
+    markerColor: [0.22, 0.54, 0.87],
+    glowColor: [0.75, 0.88, 1],
+    markers: [
+      { location: [10.8231, 106.6297], size: 0.10 },
+      { location: [21.0285, 105.8542], size: 0.07 },
+      { location: [16.0544, 108.2022], size: 0.06 },
+      { location: [10.0452, 105.7469], size: 0.06 },
+      { location: [20.8449, 106.6881], size: 0.05 },
+    ],
+    arcs: [
+      { from: [10.8231, 106.6297], to: [21.0285, 105.8542] },
+      { from: [10.8231, 106.6297], to: [16.0544, 108.2022] },
+      { from: [10.8231, 106.6297], to: [10.0452, 105.7469] },
+    ],
+    arcColor: [0.22, 0.62, 1],
+    arcWidth: 1.2,
+    arcHeight: 0.35,
+    onRender(state) { phi += 0.004; state.phi = phi; }
+  });
+</script>
 <style>
 :root {
   /* ── Colors ── */
@@ -1648,50 +1686,6 @@ new Chart(document.getElementById('chartQuadrant'), {
 
   activate(sectionIds[0]);
   updateScrollMargin();
-})();
-</script>
-<script>
-(function () {
-  const canvas = document.getElementById('cobe-canvas');
-  const s = 320;
-  canvas.width = s * 2;
-  canvas.height = s * 2;
-
-  const cities = [
-    { lat: 10.8231, lng: 106.6297, size: 0.10, color: [0.38, 0.6, 0.22] }, // HCM
-    { lat: 21.0285, lng: 105.8542, size: 0.07, color: [0.22, 0.54, 0.87] }, // HN
-    { lat: 16.0544, lng: 108.2022, size: 0.06, color: [0.22, 0.54, 0.87] }, // DN
-    { lat: 10.0452, lng: 105.7469, size: 0.06, color: [0.22, 0.54, 0.87] }, // CT
-    { lat: 20.8449, lng: 106.6881, size: 0.05, color: [0.85, 0.35, 0.19] }, // HP
-    { lat: 12.2388, lng: 109.1967, size: 0.05, color: [0.85, 0.35, 0.19] }, // NT
-    { lat: 10.9574, lng: 106.8426, size: 0.05, color: [0.73, 0.46, 0.09] }, // BD
-  ];
-
-  let phi = 1.55;
-
-  createGlobe(canvas, {
-    devicePixelRatio: 2,
-    width: s * 2, height: s * 2,
-    phi: phi, theta: -0.15,
-    dark: 0,
-    diffuse: 1.3,
-    mapSamples: 16000,
-    mapBrightness: 6.5,
-    baseColor: [0.92, 0.96, 1],
-    markerColor: [0.22, 0.54, 0.87],
-    glowColor: [0.75, 0.88, 1],
-    markers: cities.map(c => ({ location: [c.lat, c.lng], size: c.size, color: c.color })),
-    arcs: [
-      { from: [10.8231, 106.6297], to: [21.0285, 105.8542] },
-      { from: [10.8231, 106.6297], to: [16.0544, 108.2022] },
-      { from: [10.8231, 106.6297], to: [10.0452, 105.7469] },
-      { from: [10.8231, 106.6297], to: [20.8449, 106.6881] },
-    ],
-    arcColor: [0.22, 0.62, 1],
-    arcWidth: 1.2,
-    arcHeight: 0.35,
-    onRender(state) { phi += 0.004; state.phi = phi; }
-  });
 })();
 </script>
 </body>
